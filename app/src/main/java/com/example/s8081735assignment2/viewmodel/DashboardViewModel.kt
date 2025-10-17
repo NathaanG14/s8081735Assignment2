@@ -1,13 +1,12 @@
-package com.example.s8081735assignment2.viewmodel
+package com.example.s8081735assignment2.ui.dashboard
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.s8081735assignment2.data.model.DashboardResponse
+import com.example.s8081735assignment2.data.model.Entity
 import com.example.s8081735assignment2.data.repository.NitRepository
-import com.example.s8081735assignment2.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,29 +15,20 @@ class DashboardViewModel @Inject constructor(
     private val repository: NitRepository
 ) : ViewModel() {
 
-    private val _dashboardData = MutableStateFlow<Resource<DashboardResponse>>(Resource.Loading)
-    val dashboardData: StateFlow<Resource<DashboardResponse>> = _dashboardData
+    private val _entities = MutableLiveData<Result<List<Entity>>>()
+    val entities: LiveData<Result<List<Entity>>> = _entities
 
-    /**
-     * Loads dashboard data for the provided keypass (e.g., "photography")
-     */
-    fun loadDashboardData(keypass: String = "photography") {
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
+    fun loadDashboard(keypass: String = "photography") {
         viewModelScope.launch {
-            _dashboardData.value = Resource.Loading
-            try {
-                val response = repository.getDashboardData(keypass)
-                if (response.isSuccessful && response.body() != null) {
-                    _dashboardData.value = Resource.Success(response.body()!!)
-                } else {
-                    _dashboardData.value =
-                        Resource.Error("Failed to load data (Code: ${response.code()})")
-                }
-            } catch (e: Exception) {
-                _dashboardData.value =
-                    Resource.Error("Network error: ${e.localizedMessage ?: "Unknown error"}")
-            }
+            _isLoading.value = true
+            _entities.value = repository.getDashboard(keypass)
+            _isLoading.value = false
         }
     }
 }
+
 
 

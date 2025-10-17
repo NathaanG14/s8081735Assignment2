@@ -1,14 +1,11 @@
-package com.example.s8081735assignment2.viewmodel
+package com.example.s8081735assignment2.ui.login
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.s8081735assignment2.data.model.AuthRequest
-import com.example.s8081735assignment2.data.model.AuthResponse
 import com.example.s8081735assignment2.data.repository.NitRepository
-import com.example.s8081735assignment2.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,35 +14,19 @@ class LoginViewModel @Inject constructor(
     private val repository: NitRepository
 ) : ViewModel() {
 
-    private val _loginState = MutableStateFlow<Resource<AuthResponse>>(Resource.Loading)
-    val loginState: StateFlow<Resource<AuthResponse>> = _loginState
+    private val _loginResult = MutableLiveData<Result<String>>()
+    val loginResult: LiveData<Result<String>> = _loginResult
 
-    /**
-     * Performs login using the Footscray endpoint.
-     */
-    fun loginUser(username: String, studentId: String) {
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
+    fun login(username: String, password: String) {
         viewModelScope.launch {
-            _loginState.value = Resource.Loading
-            try {
-                if (username.isBlank() || studentId.isBlank()) {
-                    _loginState.value = Resource.Error("Please enter both username and password.")
-                    return@launch
-                }
-
-                val request = AuthRequest(username, studentId)
-                val response = repository.loginUser(request)
-
-                if (response.isSuccessful && response.body() != null) {
-                    _loginState.value = Resource.Success(response.body()!!)
-                } else {
-                    _loginState.value =
-                        Resource.Error("Login failed (Code: ${response.code()})")
-                }
-            } catch (e: Exception) {
-                _loginState.value =
-                    Resource.Error("Network error: ${e.localizedMessage ?: "Unknown error"}")
-            }
+            _isLoading.value = true
+            _loginResult.value = repository.login(username, password)
+            _isLoading.value = false
         }
     }
 }
+
 

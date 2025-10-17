@@ -4,24 +4,32 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.example.s8081735assignment2.R
+import androidx.navigation.fragment.navArgs
+import com.example.s8081735assignment2.databinding.FragmentDetailsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class DetailsFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, c: ViewGroup?, s: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_details, c, false)
+    private var _binding: FragmentDetailsBinding? = null
+    private val binding get() = _binding!!
+    private val args: DetailsFragmentArgs by navArgs()
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val entity = DetailsFragmentArgs.fromBundle(requireArguments()).entity
-        view.findViewById<TextView>(R.id.tvTechnique).text = entity.technique ?: ""
-        view.findViewById<TextView>(R.id.tvEquipment).text = "Equipment: ${entity.equipment ?: ""}"
-        view.findViewById<TextView>(R.id.tvSubject).text = "Subject: ${entity.subject ?: ""}"
-        view.findViewById<TextView>(R.id.tvPhotographer).text = "Pioneer: ${entity.pioneeringPhotographer ?: ""}"
-        view.findViewById<TextView>(R.id.tvYear).text = "Year: ${entity.yearIntroduced ?: ""}"
-        view.findViewById<TextView>(R.id.tvDescription).text = entity.description ?: ""
+        super.onViewCreated(view, savedInstanceState)
+        val e = args.entity
+        binding.detailTechnique.text = e.technique
+        binding.detailDescription.text = e.description
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

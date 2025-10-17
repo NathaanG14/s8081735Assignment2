@@ -4,32 +4,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="12dp"
-    app:cardElevation="4dp"
+    android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
-    android:backgroundTint="#FFFFFF">
+    app:cardElevation="4dp"
+    android:backgroundTint="@color/light_gray">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <TextView
-            android:id="@+id/tvEntityTitle"
-            android:layout_width="match_parent"
+            android:id="@+id/itemTechnique"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:text="Technique"
             android:textStyle="bold"
-            android:textColor="#263238" />
+            android:textSize="16sp"
+            android:textColor="@color/black" />
 
         <TextView
-            android:id="@+id/tvEntitySubtitle"
-            android:layout_width="match_parent"
+            android:id="@+id/itemEquipment"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#607D8B"
+            android:text="Equipment"
+            android:textColor="@color/gray"
+            android:textSize="14sp"
             android:layout_marginTop="4dp" />
-
     </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>
+
 

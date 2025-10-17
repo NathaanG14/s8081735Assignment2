@@ -6,11 +6,11 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Entity(
-    @Json(name = "technique") val technique: String?,
-    @Json(name = "equipment") val equipment: String?,
-    @Json(name = "subject") val subject: String?,
-    @Json(name = "pioneeringPhotographer") val pioneeringPhotographer: String?,
-    @Json(name = "yearIntroduced") val yearIntroduced: Int?,
-    @Json(name = "description") val description: String?
+    @Json(name = "technique") val technique: String? = null,
+    @Json(name = "equipment") val equipment: String? = null,
+    @Json(name = "subject") val subject: String? = null,
+    @Json(name = "pioneeringPhotographer") val pioneeringPhotographer: String? = null,
+    @Json(name = "yearIntroduced") val yearIntroduced: Int? = null,
+    @Json(name = "description") val description: String? = null
 ) : Parcelable
 

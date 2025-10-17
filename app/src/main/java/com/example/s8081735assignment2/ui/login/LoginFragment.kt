@@ -4,81 +4,57 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.s8081735assignment2.R
-import com.example.s8081735assignment2.util.Resource
-import com.example.s8081735assignment2.viewmodel.LoginViewModel
+import com.example.s8081735assignment2.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
 
-    private val vm: LoginViewModel by viewModels()
+    private var _binding: FragmentLoginBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: LoginViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_login, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val etUser = view.findViewById<EditText>(R.id.etUsername)
-        val etPass = view.findViewById<EditText>(R.id.etPassword)
-        val btnLogin = view.findViewById<Button>(R.id.btnLogin)
-        val pb = view.findViewById<ProgressBar>(R.id.progressBar)
-        val tvError = view.findViewById<TextView>(R.id.tvError)
+        binding.loginButton.setOnClickListener {
+            val username = binding.usernameEditText.text.toString()
+            val password = binding.passwordEditText.text.toString()
 
-        btnLogin.setOnClickListener {
-            tvError.text = ""
-            val username = etUser.text.toString().trim()
-            val password = etPass.text.toString().trim()
-            vm.loginUser(username, password)
-        }
-
-        etPass.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                btnLogin.performClick()
-                true
-            } else false
-        }
-
-        lifecycleScope.launch {
-            vm.loginState.collectLatest { state ->
-                when (state) {
-                    is Resource.Loading -> {
-                        pb.visibility = View.VISIBLE
-                        btnLogin.isEnabled = false
-                    }
-                    is Resource.Success -> {
-                        pb.visibility = View.GONE
-                        btnLogin.isEnabled = true
-                        val keypass = state.data.keypass ?: "photography"
-                        val action =
-                            LoginFragmentDirections.actionLoginFragmentToDashboardFragment(keypass)
-                        findNavController().navigate(action)
-                    }
-                    is Resource.Error -> {
-                        pb.visibility = View.GONE
-                        btnLogin.isEnabled = true
-                        tvError.text = state.message
-                    }
-
-                    Resource.Idle -> TODO()
-                }
+            if (username.isNotEmpty() && password.isNotEmpty()) {
+                viewModel.login(username, password)
+            } else {
+                Toast.makeText(context, "Please enter both fields", Toast.LENGTH_SHORT).show()
             }
         }
+
+        viewModel.loginResult.observe(viewLifecycleOwner) { result ->
+            result.onSuccess { keypass ->
+                val action = LoginFragmentDirections.actionLoginFragmentToDashboardFragment(keypass)
+                findNavController().navigate(action)
+            }.onFailure {
+                Toast.makeText(context, "Login failed: ${it.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+            binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
+            binding.loginButton.isEnabled = !loading
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
 

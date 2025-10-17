@@ -1,6 +1,7 @@
 package com.example.s8081735assignment2.di
 
 import com.example.s8081735assignment2.data.api.NitApiService
+import com.example.s8081735assignment2.data.repository.NitRepository
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -15,7 +16,8 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object NetworkModule {
+object AppModule {
+
     private const val BASE_URL = "https://nit3213api.onrender.com/"
 
     @Provides
@@ -26,22 +28,24 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttp(): OkHttpClient {
-        val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+    fun provideHttpClient(): OkHttpClient {
+        val logging = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
         return OkHttpClient.Builder().addInterceptor(logging).build()
     }
 
     @Provides
     @Singleton
-    fun provideRetrofit(moshi: Moshi, client: OkHttpClient): Retrofit =
+    fun provideApiService(moshi: Moshi, client: OkHttpClient): NitApiService =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(client)
             .build()
+            .create(NitApiService::class.java)
 
     @Provides
     @Singleton
-    fun provideNitApiService(retrofit: Retrofit): NitApiService =
-        retrofit.create(NitApiService::class.java)
+    fun provideRepository(apiService: NitApiService): NitRepository = NitRepository(apiService)
 }
