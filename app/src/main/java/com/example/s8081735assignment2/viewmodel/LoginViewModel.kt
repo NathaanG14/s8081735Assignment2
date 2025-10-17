@@ -17,22 +17,33 @@ class LoginViewModel @Inject constructor(
     private val repository: NitRepository
 ) : ViewModel() {
 
-    private val _loginState = MutableStateFlow<Resource<AuthResponse>>(Resource.Idle)
+    private val _loginState = MutableStateFlow<Resource<AuthResponse>>(Resource.Loading)
     val loginState: StateFlow<Resource<AuthResponse>> = _loginState
 
-    fun login(username: String, password: String) {
+    /**
+     * Performs login using the Footscray endpoint.
+     */
+    fun loginUser(username: String, studentId: String) {
         viewModelScope.launch {
             _loginState.value = Resource.Loading
             try {
-                val request = AuthRequest(username, password)
+                if (username.isBlank() || studentId.isBlank()) {
+                    _loginState.value = Resource.Error("Please enter both username and password.")
+                    return@launch
+                }
+
+                val request = AuthRequest(username, studentId)
                 val response = repository.loginUser(request)
+
                 if (response.isSuccessful && response.body() != null) {
                     _loginState.value = Resource.Success(response.body()!!)
                 } else {
-                    _loginState.value = Resource.Error("Login failed: ${response.code()}")
+                    _loginState.value =
+                        Resource.Error("Login failed (Code: ${response.code()})")
                 }
             } catch (e: Exception) {
-                _loginState.value = Resource.Error("Network error: ${e.localizedMessage}")
+                _loginState.value =
+                    Resource.Error("Network error: ${e.localizedMessage ?: "Unknown error"}")
             }
         }
     }

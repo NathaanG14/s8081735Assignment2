@@ -25,10 +25,15 @@ class LoginFragment : Fragment() {
 
     private val vm: LoginViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, c: ViewGroup?, s: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_login, c, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = inflater.inflate(R.layout.fragment_login, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         val etUser = view.findViewById<EditText>(R.id.etUsername)
         val etPass = view.findViewById<EditText>(R.id.etPassword)
         val btnLogin = view.findViewById<Button>(R.id.btnLogin)
@@ -37,7 +42,9 @@ class LoginFragment : Fragment() {
 
         btnLogin.setOnClickListener {
             tvError.text = ""
-            vm.login(etUser.text.toString().trim(), etPass.text.toString().trim())
+            val username = etUser.text.toString().trim()
+            val password = etPass.text.toString().trim()
+            vm.loginUser(username, password)
         }
 
         etPass.setOnEditorActionListener { _, actionId, _ ->
@@ -57,8 +64,9 @@ class LoginFragment : Fragment() {
                     is Resource.Success -> {
                         pb.visibility = View.GONE
                         btnLogin.isEnabled = true
-                        // navigate to dashboard with keypass
-                        val action = LoginFragmentDirections.actionLoginFragmentToDashboardFragment(state.data)
+                        val keypass = state.data.keypass ?: "photography"
+                        val action =
+                            LoginFragmentDirections.actionLoginFragmentToDashboardFragment(keypass)
                         findNavController().navigate(action)
                     }
                     is Resource.Error -> {
@@ -66,8 +74,11 @@ class LoginFragment : Fragment() {
                         btnLogin.isEnabled = true
                         tvError.text = state.message
                     }
+
+                    Resource.Idle -> TODO()
                 }
             }
         }
     }
 }
+

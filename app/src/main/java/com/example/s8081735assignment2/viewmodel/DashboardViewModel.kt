@@ -16,9 +16,12 @@ class DashboardViewModel @Inject constructor(
     private val repository: NitRepository
 ) : ViewModel() {
 
-    private val _dashboardData = MutableStateFlow<Resource<DashboardResponse>>(Resource.Idle)
+    private val _dashboardData = MutableStateFlow<Resource<DashboardResponse>>(Resource.Loading)
     val dashboardData: StateFlow<Resource<DashboardResponse>> = _dashboardData
 
+    /**
+     * Loads dashboard data for the provided keypass (e.g., "photography")
+     */
     fun loadDashboardData(keypass: String = "photography") {
         viewModelScope.launch {
             _dashboardData.value = Resource.Loading
@@ -27,10 +30,12 @@ class DashboardViewModel @Inject constructor(
                 if (response.isSuccessful && response.body() != null) {
                     _dashboardData.value = Resource.Success(response.body()!!)
                 } else {
-                    _dashboardData.value = Resource.Error("Failed to load dashboard")
+                    _dashboardData.value =
+                        Resource.Error("Failed to load data (Code: ${response.code()})")
                 }
             } catch (e: Exception) {
-                _dashboardData.value = Resource.Error("Network error: ${e.localizedMessage}")
+                _dashboardData.value =
+                    Resource.Error("Network error: ${e.localizedMessage ?: "Unknown error"}")
             }
         }
     }

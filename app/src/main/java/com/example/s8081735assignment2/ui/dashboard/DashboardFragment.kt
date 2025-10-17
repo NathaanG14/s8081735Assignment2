@@ -25,28 +25,35 @@ class DashboardFragment : Fragment() {
     private val vm: DashboardViewModel by viewModels()
     private lateinit var adapter: EntitiesAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, c: ViewGroup?, s: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_dashboard, c, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = inflater.inflate(R.layout.fragment_dashboard, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerEntities)
         val pb = view.findViewById<ProgressBar>(R.id.progressBarDashboard)
         val tvEmpty = view.findViewById<TextView>(R.id.tvEmpty)
 
+        // Set up RecyclerView
         adapter = EntitiesAdapter(emptyList()) { entity ->
-            // navigate to details with parcelable entity using SafeArgs
-            val action = DashboardFragmentDirections.actionDashboardFragmentToDetailsFragment(entity)
+            val action = DashboardFragmentDirections
+                .actionDashboardFragmentToDetailsFragment(entity)
             findNavController().navigate(action)
         }
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = adapter
 
-        // read argument keypass
+        // Get argument keypass from login
         val keypass = DashboardFragmentArgs.fromBundle(requireArguments()).keypass
-        vm.loadEntities(keypass)
+        vm.loadDashboardData(keypass)
 
+        // Observe dashboard state
         lifecycleScope.launch {
-            vm.entitiesState.collectLatest { state ->
+            vm.dashboardData.collectLatest { state ->
                 when (state) {
                     is Resource.Loading -> {
                         pb.visibility = View.VISIBLE
@@ -55,24 +62,27 @@ class DashboardFragment : Fragment() {
                     }
                     is Resource.Success -> {
                         pb.visibility = View.GONE
-                        val list = state.data
-                        if (list.isEmpty()) {
+                        val data = state.data.entities ?: emptyList()
+                        if (data.isEmpty()) {
                             tvEmpty.visibility = View.VISIBLE
                             recycler.visibility = View.GONE
                         } else {
-                            adapter.setItems(list)
+                            adapter.setItems(data)
                             recycler.visibility = View.VISIBLE
                             tvEmpty.visibility = View.GONE
                         }
                     }
                     is Resource.Error -> {
                         pb.visibility = View.GONE
-                        tvEmpty.visibility = View.VISIBLE
                         tvEmpty.text = state.message
+                        tvEmpty.visibility = View.VISIBLE
                         recycler.visibility = View.GONE
                     }
+
+                    Resource.Idle -> TODO()
                 }
             }
         }
     }
 }
+
