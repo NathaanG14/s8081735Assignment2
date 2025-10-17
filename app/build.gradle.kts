@@ -33,47 +33,51 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
     }
-}
 
-dependencies {
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.navigation.fragment)
+    dependencies {
 
-    // Retrofit dependancies
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
-    implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+        implementation(libs.androidx.core.ktx)
+        implementation(libs.androidx.appcompat)
+        implementation(libs.material)
+        implementation(libs.androidx.activity)
+        implementation(libs.androidx.constraintlayout)
+        implementation(libs.androidx.navigation.fragment)
 
-    // Hilt dependancies
-    implementation("com.google.dagger:hilt-android:2.57.2")
-    kapt("com.google.dagger:hilt-android-compiler:2.57.2")
+        // Retrofit dependancies
+        implementation("com.squareup.retrofit2:retrofit:2.11.0")
+        implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
+        implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
+        implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-    // Testing dependancies
-    testImplementation("io.mockk:mockk:1.13.12")
-    testImplementation("io.mockk:mockk-android:1.13.12")
-    testImplementation("io.mockk:mockk-agent:1.13.12")
-    testImplementation(libs.junit)
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
+        // Hilt dependancies
+        implementation("com.google.dagger:hilt-android:2.57.2")
+        kapt("com.google.dagger:hilt-android-compiler:2.57.2")
 
-    androidTestImplementation("io.mockk:mockk-android:1.13.12")
-    androidTestImplementation("io.mockk:mockk-agent:1.13.12")
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-}
+        // Testing dependancies
+        testImplementation("io.mockk:mockk:1.13.12")
+        testImplementation("io.mockk:mockk-android:1.13.12")
+        testImplementation("io.mockk:mockk-agent:1.13.12")
+        testImplementation(libs.junit)
+        testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
+
+        androidTestImplementation("io.mockk:mockk-android:1.13.12")
+        androidTestImplementation("io.mockk:mockk-agent:1.13.12")
+        androidTestImplementation(libs.androidx.junit)
+        androidTestImplementation(libs.androidx.espresso.core)
+    }
 
 // Allow references to generated code
-kapt {
-    correctErrorTypes = true
+    kapt {
+        correctErrorTypes = true
+    }
 }

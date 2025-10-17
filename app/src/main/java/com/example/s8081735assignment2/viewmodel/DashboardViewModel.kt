@@ -2,7 +2,7 @@ package com.example.s8081735assignment2.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.s8081735assignment2.data.model.Entity
+import com.example.s8081735assignment2.data.model.DashboardResponse
 import com.example.s8081735assignment2.data.repository.NitRepository
 import com.example.s8081735assignment2.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,21 +12,28 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DashboardViewModel @Inject constructor(private val repo: NitRepository) : ViewModel() {
+class DashboardViewModel @Inject constructor(
+    private val repository: NitRepository
+) : ViewModel() {
 
-    private val _entitiesState = MutableStateFlow<Resource<List<Entity>>>(Resource.Loading)
-    val entitiesState: StateFlow<Resource<List<Entity>>> = _entitiesState
+    private val _dashboardData = MutableStateFlow<Resource<DashboardResponse>>(Resource.Idle)
+    val dashboardData: StateFlow<Resource<DashboardResponse>> = _dashboardData
 
-    fun loadEntities(keypass: String) {
-        _entitiesState.value = Resource.Loading
+    fun loadDashboardData(keypass: String = "photography") {
         viewModelScope.launch {
+            _dashboardData.value = Resource.Loading
             try {
-                val resp = repo.getDashboard(keypass)
-                _entitiesState.value = Resource.Success(resp.entities ?: emptyList())
+                val response = repository.getDashboardData(keypass)
+                if (response.isSuccessful && response.body() != null) {
+                    _dashboardData.value = Resource.Success(response.body()!!)
+                } else {
+                    _dashboardData.value = Resource.Error("Failed to load dashboard")
+                }
             } catch (e: Exception) {
-                _entitiesState.value = Resource.Error("Failed to get dashboard: ${e.localizedMessage ?: e.message}")
+                _dashboardData.value = Resource.Error("Network error: ${e.localizedMessage}")
             }
         }
     }
 }
+
 
