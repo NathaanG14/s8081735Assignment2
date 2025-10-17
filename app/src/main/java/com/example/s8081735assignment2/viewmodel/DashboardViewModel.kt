@@ -3,8 +3,8 @@ package com.example.s8081735assignment2.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.s8081735assignment2.data.model.Entity
-import com.example.s8081735assignment2.repository.NitRepository
-import com.example.s8081735assignment2.utils.Resource
+import com.example.s8081735assignment2.data.repository.NitRepository
+import com.example.s8081735assignment2.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,9 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DashboardViewModel @Inject constructor(
-    private val repo: NitRepository
-) : ViewModel() {
+class DashboardViewModel @Inject constructor(private val repo: NitRepository) : ViewModel() {
 
     private val _entitiesState = MutableStateFlow<Resource<List<Entity>>>(Resource.Loading)
     val entitiesState: StateFlow<Resource<List<Entity>>> = _entitiesState
@@ -24,10 +22,11 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val resp = repo.getDashboard(keypass)
-                _entitiesState.value = Resource.Success(resp.entities)
+                _entitiesState.value = Resource.Success(resp.entities ?: emptyList())
             } catch (e: Exception) {
-                _entitiesState.value = Resource.Error(e.localizedMessage ?: "Failed to load")
+                _entitiesState.value = Resource.Error("Failed to get dashboard: ${e.localizedMessage ?: e.message}")
             }
         }
     }
 }
+

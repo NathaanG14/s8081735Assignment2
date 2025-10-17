@@ -1,4 +1,4 @@
-package com.example.s8081735assignment2.utils
+package com.example.s8081735assignment2.util
 
 sealed class Resource<out T> {
     object Loading : Resource<Nothing>()

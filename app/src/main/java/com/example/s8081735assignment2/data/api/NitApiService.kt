@@ -9,10 +9,10 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface NitApiService {
-    // Use class location specific path; your spec says /footscray/auth
-    @POST("/footscray/auth")
+    @POST("footscray/auth")
     suspend fun login(@Body request: AuthRequest): AuthResponse
 
-    @GET("/dashboard/{keypass}")
+    @GET("dashboard/{keypass}")
     suspend fun getDashboard(@Path("keypass") keypass: String): DashboardResponse
 }
+

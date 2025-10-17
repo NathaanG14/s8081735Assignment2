@@ -1,11 +1,16 @@
 package com.example.s8081735assignment2.data.model
 
-import com.squareup.moshi.JsonClass
+import android.os.Parcelable
+import com.squareup.moshi.Json
+import kotlinx.parcelize.Parcelize
 
-@JsonClass(generateAdapter = true)
+@Parcelize
 data class Entity(
-    val property1: String?,
-    val property2: String?,
-    val description: String?
-)
+    @Json(name = "technique") val technique: String?,
+    @Json(name = "equipment") val equipment: String?,
+    @Json(name = "subject") val subject: String?,
+    @Json(name = "pioneeringPhotographer") val pioneeringPhotographer: String?,
+    @Json(name = "yearIntroduced") val yearIntroduced: Int?,
+    @Json(name = "description") val description: String?
+) : Parcelable
 
