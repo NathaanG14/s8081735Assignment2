@@ -43,6 +43,12 @@ android {
     }
 }
 
+tasks.withType<Test> {
+    // Suppress ByteBuddy agent warning
+    jvmArgs("-XX:+EnableDynamicAgentLoading")
+}
+
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -66,8 +72,16 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.9.0")
 
-
+    // Testing
+    testImplementation("io.mockk:mockk:1.13.12")
+    testImplementation("io.mockk:mockk-android:1.13.12")
+    testImplementation("io.mockk:mockk-agent:1.13.12")
     testImplementation(libs.junit)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("org.slf4j:slf4j-simple:1.7.36")
+    androidTestImplementation("io.mockk:mockk-android:1.13.12")
+    androidTestImplementation("io.mockk:mockk-agent:1.13.12")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
