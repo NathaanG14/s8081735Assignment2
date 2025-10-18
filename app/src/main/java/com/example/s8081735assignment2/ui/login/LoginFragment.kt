@@ -18,7 +18,11 @@ class LoginFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: LoginViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -26,29 +30,45 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.loginButton.setOnClickListener {
-            val username = binding.usernameEditText.text.toString()
-            val password = binding.passwordEditText.text.toString()
+        // Login button logic
+        binding.btnLogin.setOnClickListener {
+            // Clear previous errors
+            binding.tvError.text = ""
+            binding.tvError.visibility = View.GONE
+
+            val username = binding.etUsername.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
 
             if (username.isNotEmpty() && password.isNotEmpty()) {
                 viewModel.login(username, password)
             } else {
-                Toast.makeText(context, "Please enter both fields", Toast.LENGTH_SHORT).show()
+                binding.tvError.text = "Please enter both fields"
+                binding.tvError.visibility = View.VISIBLE
             }
         }
 
+        // Observe login result and show feedback
         viewModel.loginResult.observe(viewLifecycleOwner) { result ->
             result.onSuccess { keypass ->
-                val action = LoginFragmentDirections.actionLoginFragmentToDashboardFragment(keypass)
+                // Clear any previous error message
+                binding.tvError.text = ""
+                binding.tvError.visibility = View.GONE
+                // Navigate to dashboard
+                val action =
+                    LoginFragmentDirections.actionLoginFragmentToDashboardFragment(keypass)
                 findNavController().navigate(action)
             }.onFailure {
-                Toast.makeText(context, "Login failed: ${it.message}", Toast.LENGTH_LONG).show()
+                val msg = it.message ?: "Login failed. Please try again."
+                binding.tvError.text = msg
+                binding.tvError.visibility = View.VISIBLE
+                Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
             }
         }
 
+        // Show/hide loading spinner
         viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
             binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
-            binding.loginButton.isEnabled = !loading
+            binding.btnLogin.isEnabled = !loading
         }
     }
 
@@ -57,4 +77,5 @@ class LoginFragment : Fragment() {
         _binding = null
     }
 }
+
 
