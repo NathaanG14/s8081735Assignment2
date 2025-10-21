@@ -13,9 +13,12 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+// Tests for LoginViewModel
+// Make sure login works correctly and updates LiveData when login succeeds or fails
 @OptIn(ExperimentalCoroutinesApi::class)
 class LoginViewModelTest {
 
+    // Run LiveData instantly
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
@@ -27,7 +30,7 @@ class LoginViewModelTest {
 
     @Before
     fun setup() {
-        // Reduce SLF4J noise (if slf4j-simple is present it will respect this)
+        // Keeps logs cleaner during tests
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "ERROR")
 
         // Make the Main dispatcher deterministic for tests
@@ -42,6 +45,8 @@ class LoginViewModelTest {
         Dispatchers.resetMain()
     }
 
+    // Test that checks successful login.
+    // ViewModel should return a success result with the keypass "photography"
     @Test
     fun `login success updates loginResult and toggles loading`() = runTest {
         val username = "Test"
@@ -56,13 +61,15 @@ class LoginViewModelTest {
         // Advance until all coroutines finish
         testScheduler.advanceUntilIdle()
 
-        // Assert loginResult success and loading false
+        // Should post success with keypass and stop loading
         val result = viewModel.loginResult.value
         assertEquals(true, result?.isSuccess)
         assertEquals("photography", result?.getOrNull())
         assertEquals(false, viewModel.isLoading.value)
     }
 
+    // Test that checks failed login.
+    // Should post a failure message and turn off the loading spinner
     @Test
     fun `login failure updates loginResult with failure`() = runTest {
         val username = "Test"
@@ -72,6 +79,7 @@ class LoginViewModelTest {
         viewModel.login(username, password)
         testScheduler.advanceUntilIdle()
 
+        // Posts an error message and stops loading
         val result = viewModel.loginResult.value
         assertEquals(true, result?.isFailure)
         assertEquals("Invalid credentials", result?.exceptionOrNull()?.message)

@@ -13,18 +13,23 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+// Tests for DashboardViewModel
+// Make sure the dashboard loads data correctly and updates LiveData states for loading and results
 class DashboardViewModelTest {
 
+    // Lets LiveData run instantly for testing
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
     private val repository: NitRepository = mockk()
     private lateinit var viewModel: DashboardViewModel
 
+    // Used to control coroutines during testing
     private val dispatcher = StandardTestDispatcher()
 
     @Before
     fun setup() {
+        // Replace main dispatcher with test one for coroutines
         Dispatchers.setMain(dispatcher)
         viewModel = DashboardViewModel(repository)
     }
@@ -34,6 +39,7 @@ class DashboardViewModelTest {
         Dispatchers.resetMain()
     }
 
+    // Tests that loadDashboard updates LiveData correctly, entities are posted to LiveData and loading spinner is hidden
     @Test
     fun `loadDashboard success posts entities and toggles loading`() = runTest {
         val keypass = "photography"
@@ -42,13 +48,15 @@ class DashboardViewModelTest {
 
         viewModel.loadDashboard(keypass)
         advanceUntilIdle()
-
+        // The ViewModel should have received the data successfully
         val result = viewModel.entities.value
         assertEquals(true, result?.isSuccess)
         assertEquals(items, result?.getOrNull())
         assertEquals(false, viewModel.isLoading.value)
     }
 
+    // Tests to check that the ViewModel handles a failure properly
+    // Should post a failure result and stop loading
     @Test
     fun `loadDashboard failure posts failure and toggles loading`() = runTest {
         val keypass = "photography"
@@ -56,7 +64,7 @@ class DashboardViewModelTest {
 
         viewModel.loadDashboard(keypass)
         advanceUntilIdle()
-
+        // ViewModel should have received the failure message
         val result = viewModel.entities.value
         assertEquals(true, result?.isFailure)
         assertEquals("Server error", result?.exceptionOrNull()?.message)
