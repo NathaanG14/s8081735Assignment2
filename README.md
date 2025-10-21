@@ -49,6 +49,31 @@ It performs the following:
 
 ---
 
+## Unit Testing
+
+Unit tests are included to verify critical parts of the app:
+
+| **Test Class** | **Purpose** |
+|----------------|-------------|
+| `LoginViewModelTest` | Tests login success and failure handling. |
+| `DashboardViewModelTest` | Tests dashboard data loading and error states. |
+| `NitRepositoryTest` | Tests Retrofit integration and repository return values. |
+
+Run the tests in **Android Studio** using:  
+`Run > Run Tests in 'test'`
+
+All tests should pass successfully.
+
+---
+
+## Build & Run Instructions
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/NathaanG14/s8081735Assignment2.git
+
+---
+
 ## Tech Stack
 
 - **Language:** Kotlin  
@@ -87,7 +112,7 @@ com.example.s8081735assignment2/
 
 ---
 
-## 🧠 Code Highlights
+## Code Highlights
 
 ### Retrofit & Repository Layer
 
