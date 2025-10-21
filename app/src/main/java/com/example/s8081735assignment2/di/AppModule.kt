@@ -14,9 +14,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
-// Dagger Hilt module for dependency injection.
-// Provides singleton instances of Moshi, OkHttpClient, NitApiService, and NitRepository.
-
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
