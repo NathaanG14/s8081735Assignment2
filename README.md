@@ -7,45 +7,49 @@ It’s a small mobile app that allows users to log in and view a photography das
 
 ## Overview
 
-The app connects to a remote API hosted at: https://nit3213api.onrender.com/
-
+The app connects to a remote API hosted at:  
+https://nit3213api.onrender.com/
 
 It performs the following:
 - **Login authentication** using a POST request.
 - **Dashboard data retrieval** using a GET request.
-- **Displays data in a RecyclerView** (e.g., technique, equipment, photographer, year, etc.).
+- **Displays data in a RecyclerView** (technique, equipment, photographer, year, etc.).
 - **Navigates to a Details screen** when an item is tapped.
 
 ---
 
-## App Features
+## Login Screen
 
-### Login Screen
 - Users enter their **first name** and **student ID**.
-- Makes a **POST** request to the endpoint: https://nit3213api.onrender.com/footscray/auth
+- Makes a **POST** request to:  
+  `https://nit3213api.onrender.com/footscray/auth`
 - Successful login returns a `keypass` (always `"photography"` in this project).
 - Invalid login shows error messages such as:
-- “Invalid credentials. Please try again.”
-- “User not found. Check your name or student ID.”
+  - “Invalid credentials. Please try again.”
+  - “User not found. Check your name or student ID.”
 - On success, the user is navigated to the **Dashboard Screen**.
 
 ---
 
-### Dashboard Screen
+## Dashboard Screen
+
 - Fetches photography data from the API.
-- Makes a **GET** request from the `NitRepository.getDashboard()` method through the `NitApiService` interface.
-- Endpoint: https://nit3213api.onrender.com/dashboard/photography
-- Uses the keypass `"photography"` from the login result.
-- Displays all entities from the response (techniques, equipment, subjects, pioneering photographers, etc.) in a **RecyclerView**.
-- If no data is available, a message appears: *“No photography data available.”*
+- Makes a **GET** request via the `NitRepository.getDashboard()` method through the `NitApiService` interface.
+- Endpoint:  
+  `https://nit3213api.onrender.com/dashboard/photography`
+- Uses the `keypass` `"photography"` from the login result.
+- Displays all entities (techniques, equipment, subjects, pioneering photographers, etc.) in a **RecyclerView**.
+- If no data is available, a message appears:  
+  *“No photography data available.”*
 - Clicking on any item opens the **Details Screen**.
 
 ---
 
-### Details Screen
+## Details Screen
+
 - Shows detailed information about the selected entity.
 - Displays fields such as `technique` and `description`.
-- Data is passed between fragments using Android Navigation Component Safe Args.
+- Data is passed between fragments using **Android Navigation Component Safe Args**.
 
 ---
 
@@ -68,10 +72,26 @@ All tests should pass successfully.
 
 ## Build & Run Instructions
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/NathaanG14/s8081735Assignment2.git
+```bash
+# 1. Clone this repository
+git clone https://github.com/NathaanG14/s8081735Assignment2.git
 
+# 2. Open it in Android Studio (latest version)
+
+# 3. Wait for Gradle to finish syncing dependencies
+
+# 4. Connect an emulator or physical Android device (API 26+)
+
+# 5. Click Run to build and launch the app
+
+# 6. Login using your:
+#    Username: your first name (e.g., Nathan)
+#    Password: your student ID (e.g., 8081735)
+
+# 7. Once logged in, the dashboard will load data from:
+#    GET https://nit3213api.onrender.com/dashboard/photography
+
+```
 ---
 
 ## Tech Stack
