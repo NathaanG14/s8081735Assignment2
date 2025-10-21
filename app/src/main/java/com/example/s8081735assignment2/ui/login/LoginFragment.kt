@@ -15,8 +15,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
-    private val binding get() = _binding!!
-    private val viewModel: LoginViewModel by viewModels()
+    private val binding get() = _binding!! // Safe accessor.
+    private val viewModel: LoginViewModel by viewModels() // ViewModel for login logic.
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,8 +39,9 @@ class LoginFragment : Fragment() {
             val username = binding.etUsername.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
+            // Validate inputs.
             if (username.isNotEmpty() && password.isNotEmpty()) {
-                viewModel.login(username, password)
+                viewModel.login(username, password) // Trigger login.
             } else {
                 binding.tvError.text = "Please enter both fields"
                 binding.tvError.visibility = View.VISIBLE
@@ -53,7 +54,7 @@ class LoginFragment : Fragment() {
                 // Clear any previous error message
                 binding.tvError.text = ""
                 binding.tvError.visibility = View.GONE
-                // Navigate to dashboard
+                // Navigate to dashboard with keypass
                 val action =
                     LoginFragmentDirections.actionLoginFragmentToDashboardFragment(keypass)
                 findNavController().navigate(action)
@@ -65,7 +66,7 @@ class LoginFragment : Fragment() {
             }
         }
 
-        // Show/hide loading spinner
+        // Show/hide loading indicator.
         viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
             binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
             binding.btnLogin.isEnabled = !loading

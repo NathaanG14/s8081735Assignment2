@@ -9,6 +9,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// ViewModel for LoginFragment..
+// Handles login logic and exposes result LiveData and loading state.
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val repository: NitRepository
@@ -19,6 +21,8 @@ class LoginViewModel @Inject constructor(
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
+    // Initiates login using username and password
+    // Updates LiveData for success/failure and loading state.
 
     fun login(username: String, password: String) {
         viewModelScope.launch {

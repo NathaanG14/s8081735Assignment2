@@ -10,6 +10,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// ViewModel for DashboardFragment.
+// Loads dashboard data and exposes LiveData for the UI
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val repository: NitRepository
@@ -20,7 +22,8 @@ class DashboardViewModel @Inject constructor(
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
-
+    // Loads dashboard entities asynchronously.
+    // Updates loading state and result LiveData.
     fun loadDashboard(keypass: String = "photography") {
         viewModelScope.launch {
             _isLoading.value = true

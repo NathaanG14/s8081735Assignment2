@@ -4,6 +4,9 @@ import android.os.Parcelable
 import com.squareup.moshi.Json
 import kotlinx.parcelize.Parcelize
 
+// Represents a photography entity.
+// Parcelable for easy navigation between fragments.
+
 @Parcelize
 data class Entity(
     @Json(name = "technique") val technique: String? = null,

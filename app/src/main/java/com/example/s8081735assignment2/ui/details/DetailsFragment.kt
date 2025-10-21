@@ -13,8 +13,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class DetailsFragment : Fragment() {
 
     private var _binding: FragmentDetailsBinding? = null
-    private val binding get() = _binding!!
-    private val args: DetailsFragmentArgs by navArgs()
+    private val binding get() = _binding!! // Safe accessor.
+    private val args: DetailsFragmentArgs by navArgs() // Receive selected Entity.
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
@@ -24,12 +24,14 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val e = args.entity
+
+        // Bind entity details to UI
         binding.detailTechnique.text = e.technique
         binding.detailDescription.text = e.description
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        _binding = null // Avoid memory leaks
     }
 }
